@@ -1,0 +1,24 @@
+INFORME DE ANALISIS DE VENTAS
+========================================
+
+Ventas totales por mes:
+- 2025-01: 16 uds, ingresos $187.00
+- 2025-02: 16 uds, ingresos $215.00
+- 2025-03: 17 uds, ingresos $341.00
+- 2025-04: 20 uds, ingresos $534.00
+- 2025-05: 25 uds, ingresos $272.00
+- 2025-06: 28 uds, ingresos $273.00
+
+Producto mas vendido por mes (por cantidad):
+- 2025-01: producto A (8 uds, ingresos $80.00)
+- 2025-02: producto A (5 uds, ingresos $50.00)
+- 2025-03: producto A (6 uds, ingresos $60.00)
+- 2025-04: producto B (5 uds, ingresos $100.00)
+- 2025-05: producto G (8 uds, ingresos $40.00)
+- 2025-06: producto G (10 uds, ingresos $50.00)
+
+Resumen del periodo completo:
+- Producto mas vendido en el periodo: A (34 uds, ingresos $340.00)
+- Producto con mayores ingresos en el periodo: F (3 uds, ingresos $360.00)
+
+Grafico generado: dashboard_ventas.png
