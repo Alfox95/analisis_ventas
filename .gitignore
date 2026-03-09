@@ -1,0 +1,17 @@
+# Carpetas de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Entornos virtuales
+.venv/
+venv/
+
+# Archivos de Jupyter
+.ipynb_checkpoints/
+
+# Archivos temporales de editor/OS
+.DS_Store
+Thumbs.db
+

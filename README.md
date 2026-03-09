@@ -44,8 +44,31 @@ python analisis_ventas.py
 El script:
 
 1. Carga los datos desde `ventas.csv` usando `pandas`.
-2. Muestra información básica del DataFrame (primeras filas, tipos de datos, estadísticas).
-3. (Próximos pasos) Calculará métricas de ventas y generará gráficos.
+2. Prepara la columna de fechas y calcula métricas agregadas (ventas por mes, productos top).
+3. Genera un **dashboard de gráficos** en `dashboard_ventas.png`.
+4. Genera dos informes:
+   - `informe_ventas.txt` (texto plano).
+   - `informe_ventas.html` (HTML con tablas e imagen del dashboard).
+
+## Uso con Jupyter Notebook (opcional)
+
+Si prefieres explorar el análisis en un notebook interactivo:
+
+1. Instala Jupyter (una vez en tu entorno Python):
+
+   ```bash
+   pip install notebook
+   ```
+
+2. Desde la carpeta del proyecto, lanza Jupyter:
+
+   ```bash
+   jupyter notebook
+   ```
+
+3. Crea un nuevo notebook y reutiliza las funciones de:
+   - `analisis.py` para cargar y agrupar datos.
+   - `graficos.py` para generar gráficos.
 
 ## Notas de aprendizaje
 
@@ -54,5 +77,6 @@ Este proyecto está pensado como ejercicio introductorio para:
 - Practicar lectura de CSVs con `pandas`.
 - Aprender a agrupar y resumir datos (groupby).
 - Crear gráficos simples con `matplotlib` / `seaborn`.
+- Generar informes automatizados (texto y HTML) a partir de análisis de datos.
 - Practicar un flujo de trabajo básico con Git y GitHub.
 
