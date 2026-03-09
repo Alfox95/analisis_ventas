@@ -84,13 +84,31 @@ def generar_informe_html(
     partes.append("<head>")
     partes.append("<meta charset='utf-8' />")
     partes.append("<title>Informe de análisis de ventas</title>")
+    partes.append("<style>")
+    partes.append("body { font-family: Arial, sans-serif; margin: 20px; }")
+    partes.append("h1 { color: #333333; }")
+    partes.append("h2 { color: #555555; margin-top: 24px; }")
+    partes.append(
+        "table { border-collapse: collapse; width: 100%; font-size: 14px; }"
+    )
+    partes.append(
+        "th, td { border: 1px solid #dddddd; padding: 6px 10px; text-align: center; }"
+    )
+    partes.append("th { background-color: #f2f2f2; }")
+    partes.append(".tablas { display: flex; gap: 16px; margin-top: 12px; }")
+    partes.append(".tabla-contenedor { flex: 1; }")
+    partes.append("</style>")
     partes.append("</head>")
     partes.append("<body>")
     partes.append("<h1>Informe de análisis de ventas</h1>")
 
+    # Bloque con las dos tablas principales en paralelo
+    partes.append("<div class='tablas'>")
+
     # Ventas totales por mes
+    partes.append("<div class='tabla-contenedor'>")
     partes.append("<h2>Ventas totales por mes</h2>")
-    partes.append("<table border='1' cellspacing='0' cellpadding='4'>")
+    partes.append("<table>")
     partes.append("<tr><th>Mes</th><th>Cantidad total</th><th>Ingresos totales</th></tr>")
     for _, fila in resumen_mensual.iterrows():
         mes_str = fila["mes"].strftime("%Y-%m")
@@ -100,10 +118,12 @@ def generar_informe_html(
             f"<td>${fila['ingresos_totales']:.2f}</td></tr>"
         )
     partes.append("</table>")
+    partes.append("</div>")  # fin tabla-contenedor ventas
 
     # Producto más vendido por mes
+    partes.append("<div class='tabla-contenedor'>")
     partes.append("<h2>Producto más vendido por mes (por cantidad)</h2>")
-    partes.append("<table border='1' cellspacing='0' cellpadding='4'>")
+    partes.append("<table>")
     partes.append(
         "<tr><th>Mes</th><th>Producto</th><th>Cantidad</th><th>Ingresos</th></tr>"
     )
@@ -116,6 +136,9 @@ def generar_informe_html(
             f"<td>${fila['ingresos_totales']:.2f}</td></tr>"
         )
     partes.append("</table>")
+    partes.append("</div>")  # fin tabla-contenedor producto top
+
+    partes.append("</div>")  # fin contenedor .tablas
 
     # Resumen del periodo
     partes.append("<h2>Resumen del periodo completo</h2>")

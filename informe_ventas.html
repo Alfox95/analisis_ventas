@@ -3,11 +3,23 @@
 <head>
 <meta charset='utf-8' />
 <title>Informe de análisis de ventas</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 20px; }
+h1 { color: #333333; }
+h2 { color: #555555; margin-top: 24px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { border: 1px solid #dddddd; padding: 6px 10px; text-align: center; }
+th { background-color: #f2f2f2; }
+.tablas { display: flex; gap: 16px; margin-top: 12px; }
+.tabla-contenedor { flex: 1; }
+</style>
 </head>
 <body>
 <h1>Informe de análisis de ventas</h1>
+<div class='tablas'>
+<div class='tabla-contenedor'>
 <h2>Ventas totales por mes</h2>
-<table border='1' cellspacing='0' cellpadding='4'>
+<table>
 <tr><th>Mes</th><th>Cantidad total</th><th>Ingresos totales</th></tr>
 <tr><td>2025-01</td><td>16</td><td>$187.00</td></tr>
 <tr><td>2025-02</td><td>16</td><td>$215.00</td></tr>
@@ -16,8 +28,10 @@
 <tr><td>2025-05</td><td>25</td><td>$272.00</td></tr>
 <tr><td>2025-06</td><td>28</td><td>$273.00</td></tr>
 </table>
+</div>
+<div class='tabla-contenedor'>
 <h2>Producto más vendido por mes (por cantidad)</h2>
-<table border='1' cellspacing='0' cellpadding='4'>
+<table>
 <tr><th>Mes</th><th>Producto</th><th>Cantidad</th><th>Ingresos</th></tr>
 <tr><td>2025-01</td><td>A</td><td>8</td><td>$80.00</td></tr>
 <tr><td>2025-02</td><td>A</td><td>5</td><td>$50.00</td></tr>
@@ -26,6 +40,8 @@
 <tr><td>2025-05</td><td>G</td><td>8</td><td>$40.00</td></tr>
 <tr><td>2025-06</td><td>G</td><td>10</td><td>$50.00</td></tr>
 </table>
+</div>
+</div>
 <h2>Resumen del periodo completo</h2>
 <ul>
 <li>Producto más vendido en el periodo: <strong>A</strong> (34 uds, ingresos $340.00)</li>
