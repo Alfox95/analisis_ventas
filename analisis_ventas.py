@@ -43,15 +43,21 @@ def preparar_fechas(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def ventas_totales_por_mes(df: pd.DataFrame) -> pd.DataFrame:
+def agregar_ingresos(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Calcula las ventas totales por mes.
-
-    Se añade una columna 'ingresos' = cantidad * precio
-    y luego se agrupa por 'mes'.
+    Añade una columna 'ingresos' = cantidad * precio.
     """
     df = df.copy()
     df["ingresos"] = df["cantidad"] * df["precio"]
+    return df
+
+
+def ventas_totales_por_mes(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Calcula las ventas totales por mes
+    (cantidad_total e ingresos_totales).
+    """
+    df = agregar_ingresos(df)
     resumen = (
         df.groupby("mes", as_index=False)
         .agg(
@@ -68,9 +74,7 @@ def producto_top_por_mes(df: pd.DataFrame) -> pd.DataFrame:
     Devuelve, para cada mes, el producto más vendido (por cantidad)
     y el ingreso total que generó ese producto en ese mes.
     """
-    df = df.copy()
-    df["ingresos"] = df["cantidad"] * df["precio"]
-
+    df = agregar_ingresos(df)
     resumen = (
         df.groupby(["mes", "producto"], as_index=False)
         .agg(
@@ -90,8 +94,7 @@ def producto_top_periodo(df: pd.DataFrame) -> pd.DataFrame:
     Devuelve el producto más vendido en todo el periodo (por cantidad)
     y el ingreso total asociado a ese producto.
     """
-    df = df.copy()
-    df["ingresos"] = df["cantidad"] * df["precio"]
+    df = agregar_ingresos(df)
 
     resumen = (
         df.groupby("producto", as_index=False)
@@ -110,8 +113,7 @@ def producto_mas_ingresos_periodo(df: pd.DataFrame) -> pd.DataFrame:
     """
     Devuelve el producto que más ingresos generó en todo el periodo.
     """
-    df = df.copy()
-    df["ingresos"] = df["cantidad"] * df["precio"]
+    df = agregar_ingresos(df)
 
     resumen = (
         df.groupby("producto", as_index=False)
@@ -130,8 +132,7 @@ def producto_mas_ingresos_por_mes(df: pd.DataFrame) -> pd.DataFrame:
     """
     Devuelve, para cada mes, el producto que más ingresos generó.
     """
-    df = df.copy()
-    df["ingresos"] = df["cantidad"] * df["precio"]
+    df = agregar_ingresos(df)
 
     resumen = (
         df.groupby(["mes", "producto"], as_index=False)
@@ -144,171 +145,7 @@ def producto_mas_ingresos_por_mes(df: pd.DataFrame) -> pd.DataFrame:
     idx_max = resumen.groupby("mes")["ingresos_totales"].idxmax()
     top_mes = resumen.loc[idx_max].sort_values("mes")
     return top_mes
-
-
-def graficar_resumen_mensual(
-    resumen_mensual: pd.DataFrame,
-    top_mes_cantidad: pd.DataFrame,
-    top_mes_ingresos: pd.DataFrame,
-    ruta_png: str,
-) -> None:
-    """
-    Genera un PNG con varios subgráficos:
-    - Ingresos por mes del periodo.
-    - Producto más vendido (por cantidad) por mes.
-    - Ingresos por mes anotando el producto top por ingresos.
-    """
-    fig, axes = plt.subplots(3, 1, figsize=(10, 12), constrained_layout=True)
-
-    # Eje X como cadena YYYY-MM para que sea más legible
-    resumen_mensual = resumen_mensual.copy()
-    resumen_mensual["mes_str"] = resumen_mensual["mes"].dt.strftime("%Y-%m")
-
-    top_mes_cantidad = top_mes_cantidad.copy()
-    top_mes_cantidad["mes_str"] = top_mes_cantidad["mes"].dt.strftime("%Y-%m")
-
-    top_mes_ingresos = top_mes_ingresos.copy()
-    top_mes_ingresos["mes_str"] = top_mes_ingresos["mes"].dt.strftime("%Y-%m")
-
-    # 1) Ingresos por mes
-    axes[0].bar(resumen_mensual["mes_str"], resumen_mensual["ingresos_totales"], color="steelblue")
-    axes[0].set_title("Ingresos totales por mes")
-    axes[0].set_ylabel("Ingresos")
-
-    # 2) Producto más vendido por mes (cantidad)
-    axes[1].bar(top_mes_cantidad["mes_str"], top_mes_cantidad["cantidad_total"], color="seagreen")
-    axes[1].set_title("Producto más vendido por mes (cantidad)")
-    axes[1].set_ylabel("Unidades")
-    # Etiquetas con el nombre del producto sobre cada barra
-    for x, y, prod in zip(
-        top_mes_cantidad["mes_str"],
-        top_mes_cantidad["cantidad_total"],
-        top_mes_cantidad["producto"],
-    ):
-        axes[1].text(x, y, prod, ha="center", va="bottom")
-
-    # 3) Ingresos por mes y producto con más ingresos
-    axes[2].bar(resumen_mensual["mes_str"], resumen_mensual["ingresos_totales"], color="darkorange")
-    axes[2].set_title("Ingresos por mes y producto top por ingresos")
-    axes[2].set_ylabel("Ingresos")
-
-    # Creamos un diccionario mes -> producto_top_por_ingresos
-    prod_top_por_mes = dict(
-        zip(top_mes_ingresos["mes_str"], top_mes_ingresos["producto"])
-    )
-
-    for x, y in zip(resumen_mensual["mes_str"], resumen_mensual["ingresos_totales"]):
-        prod = prod_top_por_mes.get(x, "")
-        if prod:
-            axes[2].text(x, y, prod, ha="center", va="bottom")
-
-    for ax in axes:
-        ax.set_xlabel("Mes")
-        ax.tick_params(axis="x", rotation=45)
-
-    fig.suptitle("Resumen mensual de ventas", fontsize=14)
-    plt.savefig(ruta_png, dpi=150)
-    plt.close(fig)
-
-
-def graficar_top_ingresos_por_mes(
-    top_mes_ingresos: pd.DataFrame,
-    ruta_png: str,
-) -> None:
-    """
-    Genera un PNG que muestra el producto que más ingresos generó
-    en cada mes del periodo.
-    """
-    top_mes_ingresos = top_mes_ingresos.copy()
-    top_mes_ingresos["mes_str"] = top_mes_ingresos["mes"].dt.strftime("%Y-%m")
-
-    fig, ax = plt.subplots(figsize=(10, 5))
-
-    ax.bar(top_mes_ingresos["mes_str"], top_mes_ingresos["ingresos_totales"], color="purple")
-    ax.set_title("Producto con más ingresos por mes")
-    ax.set_xlabel("Mes")
-    ax.set_ylabel("Ingresos del producto top")
-
-    for x, y, prod in zip(
-        top_mes_ingresos["mes_str"],
-        top_mes_ingresos["ingresos_totales"],
-        top_mes_ingresos["producto"],
-    ):
-        ax.text(x, y, prod, ha="center", va="bottom")
-
-    ax.tick_params(axis="x", rotation=45)
-    plt.tight_layout()
-    plt.savefig(ruta_png, dpi=150)
-    plt.close(fig)
-
-
-def graficar_pie_ingresos_y_cantidades(
-    resumen_mensual: pd.DataFrame,
-    ruta_png_ingresos: str,
-    ruta_png_cantidades: str,
-) -> None:
-    """
-    Genera dos gráficos de torta (pastel):
-    - Distribución de ingresos por mes en todo el periodo.
-    - Distribución de unidades vendidas (cantidad_total) por mes.
-    """
-    resumen_mensual = resumen_mensual.copy()
-    resumen_mensual["mes_str"] = resumen_mensual["mes"].dt.strftime("%Y-%m")
-
-    total_ingresos = resumen_mensual["ingresos_totales"].sum()
-    total_cantidades = resumen_mensual["cantidad_total"].sum()
-
-    # Funciones helper para mostrar % y valor absoluto
-    def autopct_ingresos(pct):
-        valor = pct * total_ingresos / 100.0
-        return f"{pct:0.1f}%\n${valor:0.0f}"
-
-    def autopct_cantidades(pct):
-        valor = pct * total_cantidades / 100.0
-        return f"{pct:0.1f}%\n{valor:0.0f} uds"
-
-    # Pie de ingresos por mes
-    fig1, ax1 = plt.subplots(figsize=(6, 6))
-    ax1.pie(
-        resumen_mensual["ingresos_totales"],
-        labels=resumen_mensual["mes_str"],
-        autopct=autopct_ingresos,
-        startangle=90,
-    )
-    ax1.set_title("Distribución de ingresos por mes")
-    ax1.axis("equal")  # Círculo perfecto
-    # Texto con el total
-    fig1.text(
-        0.5,
-        0.02,
-        f"Ingresos totales: ${total_ingresos:0.2f}",
-        ha="center",
-        va="bottom",
-    )
-    plt.savefig(ruta_png_ingresos, dpi=150)
-    plt.close(fig1)
-
-    # Pie de cantidades por mes
-    fig2, ax2 = plt.subplots(figsize=(6, 6))
-    ax2.pie(
-        resumen_mensual["cantidad_total"],
-        labels=resumen_mensual["mes_str"],
-        autopct=autopct_cantidades,
-        startangle=90,
-    )
-    ax2.set_title("Distribución de unidades vendidas por mes")
-    ax2.axis("equal")
-    fig2.text(
-        0.5,
-        0.02,
-        f"Unidades totales: {total_cantidades:0.0f}",
-        ha="center",
-        va="bottom",
-    )
-    plt.savefig(ruta_png_cantidades, dpi=150)
-    plt.close(fig2)
-
-
+    
 def graficar_dashboard(
     resumen_mensual: pd.DataFrame,
     top_mes_cantidad: pd.DataFrame,
